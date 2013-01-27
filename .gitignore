@@ -1,5 +1,6 @@
 \#*\#
 *~
+*.swp
 TAGS
 db/schema.rb
 log/

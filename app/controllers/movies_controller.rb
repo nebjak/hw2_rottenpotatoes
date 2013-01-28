@@ -7,13 +7,24 @@ class MoviesController < ApplicationController
   end
 
   def index
+    @all_ratings = ['G','PG','PG-13','R']
     case params[:sort]
     when "title"
-      @movies = Movie.order('title asc').all
+      @movies = Movie.order('title asc')
     when "release_date"
-      @movies = Movie.order('release_date asc').all
+      @movies = Movie.order('release_date asc')
     else
-      @movies = Movie.all
+      @movies = Movie.order()
+    end
+    unless params[:ratings].nil?
+      @ratings = params[:ratings]
+      rat = params[:ratings].map do |k, v|
+        k
+      end
+      @movies = @movies.where :rating => rat
+    else
+      @ratings = Hash.new 0
+      @movies = @movies.all
     end
   end
 

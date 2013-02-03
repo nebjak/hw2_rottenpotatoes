@@ -8,7 +8,28 @@ class MoviesController < ApplicationController
 
   def index
     @all_ratings = ['G','PG','PG-13','R']
-    case params[:sort]
+
+    sort = params[:sort]
+    if sort.nil?
+      sort = session[:sort]
+      to_red = true unless sort.nil?
+    else
+      session[:sort] = sort
+    end
+
+    ratings = params[:ratings]
+    if ratings.nil?
+      ratings = session[:ratings]
+    else
+      session[:ratings] = ratings
+    end
+
+    if to_red
+      flash.keep
+      redirect_to movies_path(sort: session[:sort], ratings: session[:ratings])
+    end
+
+    case sort
     when "title"
       @movies = Movie.order('title asc')
     when "release_date"
@@ -16,9 +37,10 @@ class MoviesController < ApplicationController
     else
       @movies = Movie.order()
     end
-    unless params[:ratings].nil?
-      @ratings = params[:ratings]
-      rat = params[:ratings].map do |k, v|
+
+    unless ratings.nil?
+      @ratings = ratings
+      rat = ratings.map do |k, v|
         k
       end
       @movies = @movies.where :rating => rat
